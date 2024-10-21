@@ -4,7 +4,9 @@
       <font-awesome-icon :icon="['fas', 'down-left-and-up-right-to-center']" />
       <font-awesome-icon :icon="['fas', 'up-right-and-down-left-from-center']" />
     </div>
-    <router-link to="/" class="aside__logo"> SSW <span>Music</span> </router-link>
+    <router-link to="/" class="aside__logo"> 
+      <div @click="removeMenu">SSW <span>Music</span> </div>
+    </router-link>
     <div class="aside__burger" @click="menuToggle"><span></span></div>
     <nav class="aside__nav">
       <div @click="removeMenu">
