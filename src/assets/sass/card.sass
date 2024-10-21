@@ -1,0 +1,135 @@
+@import "base/variables.sass"
+
+.card
+    display: grid
+    grid-template-columns: 1fr 1fr 1fr
+    border-radius: 4px
+    padding: 6px
+    padding-right: 16px
+    background: rgba(0, 0, 0, 0.3)
+    @media (max-width: 767px) 
+        padding: 4px
+        padding-right: 8px
+    @media (max-width: 660px) 
+        grid-template-columns: 1fr 1fr
+        row-gap: 20px
+        padding: 8px
+    
+    &__left
+        display: flex
+        gap: 6px
+        align-items: center
+        @media (max-width: 660px) 
+            order: 1
+    &__right
+        display: flex
+        align-items: center
+        gap: 6px
+        justify-content: flex-end
+        @media (max-width: 660px) 
+            order: 2
+    &__fav
+        flex: 0 0 18px
+        height: 18px
+        cursor: pointer
+        & svg
+            height: 100%
+            width: 100%
+            & path
+                transition: all 0.3s ease 0s
+        &.checked svg path
+            fill: $main
+    &__image
+        flex: 0 0 50px
+        width: 50px
+        height: 50px
+        border-radius: 4px
+        overflow: hidden
+        @media (max-width: 767px) 
+            flex: 0 0 44px
+            width: 44px
+            height: 44px
+        & img
+            width: 100%
+            height: 100%
+            object-fit: cover
+    &__text
+        display: flex
+        flex-direction: column
+        justify-content: space-between
+        & p
+            font-size: 18px
+            color: $main
+            overflow: hidden
+            text-overflow: ellipsis
+        & span
+            white-space: nowrap
+            overflow: hidden
+            text-overflow: ellipsis
+            font-size: 14px
+            color: rgba(255, 255, 255, 0.9)
+        @media (max-width: 767px) 
+            & p
+                font-size: 14px
+            & span
+                font-size: 11px
+    &__player
+        & audio
+            display: none
+        display: flex
+        flex-direction: column
+        gap: 4px
+        @media (max-width: 660px) 
+            order: 3
+            grid-column: span 2
+    &__actions
+        display: flex
+        justify-content: center
+        gap: 12px
+    &__play
+        flex: 0 0 40px
+        width: 40px
+        background: $white
+        height: 40px
+        border-radius: 50%
+        cursor: pointer
+        position: relative
+        & svg
+            position: absolute
+            top: 50%
+            left: 50%
+            transform: translate(-50%, -50%)
+            transition: all 0.3s ease 0s
+            width: 20px
+            & path
+                fill: $main
+            &:first-of-type
+                left: 51%
+            &:nth-child(2)
+                transform: translate(-50%, -50%) scale(0)
+        &.active 
+            & svg
+                transform: translate(-50%, -50%) scale(0)
+                &:nth-child(2)
+                    transform: translate(-50%, -50%) scale(1)
+    &__time
+        display: flex
+        align-items: center
+        gap: 4px
+        font-size: 12px
+        line-height: 1
+        & p
+            cursor: pointer
+            flex: 1 1 auto
+            height: 3px
+            background: $grey
+            overflow: hidden
+            border-radius: 4px
+            position: relative
+            & b
+                height: 100%
+                position: absolute
+                left: 0
+                background: $main
+                top: 0
+            

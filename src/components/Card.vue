@@ -1,0 +1,127 @@
+<template>
+    <div class="card">
+        <div class="card__left">
+            <div class="card__image">
+                <img v-if="item.image" :src="item.image" alt="">
+                <img v-else src="@/assets/images/mp3.webp" alt="">
+            </div>
+            <div class="card__text">
+                <p>
+                    {{ item.name }}
+                </p>
+                <span>
+                    {{ item.singer }}
+                </span>
+            </div>
+        </div>
+        <div class="card__player">
+            <audio ref="audio" @timeupdate="updateCurrentTime" @ended="onEnd" @loadedmetadata="updateDuration">
+                <source :src="item.source" type="audio/mpeg">
+            </audio>
+            <div class="card__actions">
+                <div class="card__play" :class="isPlaying ? 'active' : ''" @click="togglePlay">
+                    <font-awesome-icon :icon="['fas', 'play']" />
+                    <font-awesome-icon :icon="['fas', 'pause']" />
+                </div>
+            </div>
+            <div class="card__time">
+                <span>{{ formattedCurrentTime }}</span>
+                <p @click="updateTime">
+                    <b :style="{ width: progressBarWidth }"></b>
+                </p>
+                <span>{{ formattedDuration }}</span>
+            </div>
+        </div>
+        <div class="card__right">
+            <div class="card__fav" :class="{ 'checked': isFavouriteInVuex }" @click="toggleFavourite">
+                <font-awesome-icon :icon="['fas', 'heart']" />
+            </div>
+        </div>
+    </div>
+</template>
+
+<script lang="ts">
+import { Component, Vue, Prop } from "vue-property-decorator";
+import { IMusic } from "@/mixins/index"
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faHouse, faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
+library.add(faHouse, faPlay, faPause);
+@Component
+export default class Card extends Vue {
+    @Prop() item!: IMusic;
+    static currentAudio: HTMLAudioElement | null = null;
+    isPlaying = false;
+    currentTime = 0;
+    duration = 0;
+    
+    get isFavouriteInVuex() {
+        return this.$store.getters.isFavorite(this.item.id);
+    }
+
+    toggleFavourite() {
+        this.$store.dispatch('toggleFavorite', this.item);
+    }
+
+    get formattedDuration() {
+        return this.duration ? this.formatTime(this.duration) : "0:00";
+    }
+
+    get formattedCurrentTime() {
+        return this.formatTime(this.currentTime);
+    }
+
+    get progressBarWidth() {
+        return this.duration ? `${(this.currentTime / this.duration) * 100}%` : '0%';
+    }
+
+    togglePlay() {
+        const audio = this.$refs.audio as HTMLAudioElement;
+        if (this.isPlaying) {
+            audio.pause();
+        } else {
+        audio.play();
+            this.$emit('pause-other-audios', audio);
+        }
+        this.isPlaying = !this.isPlaying;
+    }
+
+    updateCurrentTime() {
+        const audio = this.$refs.audio as HTMLAudioElement;
+        this.currentTime = audio.currentTime;
+    }
+
+    onEnd() {
+        this.isPlaying = false;
+        this.currentTime = 0;
+        this.currentAudio = null;
+    }
+
+    updateDuration() {
+        const audio = this.$refs.audio as HTMLAudioElement;
+        this.duration = audio.duration;
+    }
+
+    formatTime(seconds: number) {
+        if (isNaN(seconds) || seconds < 0) {
+            return "0:00";
+        }
+        const minutes = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+
+    updateTime(event: MouseEvent) {
+        const progressBar = event.currentTarget as HTMLElement;
+        const offsetX = event.offsetX;
+        const width = progressBar.clientWidth;
+        const newTime = (offsetX / width) * this.duration;
+        const audio = this.$refs.audio as HTMLAudioElement;
+        audio.currentTime = newTime;
+        this.currentTime = newTime;
+    }
+}
+</script>
+
+<style lang="sass" scoped>
+@import '@/assets/sass/card.sass'
+</style>
