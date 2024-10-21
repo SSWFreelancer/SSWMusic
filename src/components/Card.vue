@@ -49,7 +49,6 @@ library.add(faHouse, faPlay, faPause);
 @Component
 export default class Card extends Vue {
     @Prop() item!: IMusic;
-    static currentAudio: HTMLAudioElement | null = null;
     isPlaying = false;
     currentTime = 0;
     duration = 0;
@@ -93,7 +92,6 @@ export default class Card extends Vue {
     onEnd() {
         this.isPlaying = false;
         this.currentTime = 0;
-        this.currentAudio = null;
     }
 
     updateDuration() {

@@ -16,7 +16,7 @@ import Card from "./Card.vue";
 export default class Cards extends Vue {
     @Prop() items!: IMusic[];
     pauseOtherAudios(currentAudio: HTMLAudioElement) {
-        const audioPlayers = this.$children as AudioPlayer[];
+        const audioPlayers = this.$children as Card[];
         audioPlayers.forEach(player => {
             const audio = player.$refs.audio as HTMLAudioElement;
             if (audio && audio !== currentAudio) {
