@@ -1,6 +1,6 @@
 <template>
     <div class="cards">
-        <Card v-for="item in items" :key="item.id" :item="item" @pause-other-audios="pauseOtherAudios"/>
+        <Card v-for="item in items" :key="item.id" :item="item"/>
     </div>
 </template>
 
@@ -15,17 +15,6 @@ import Card from "./Card.vue";
 })
 export default class Cards extends Vue {
     @Prop() items!: IMusic[];
-    pauseOtherAudios(currentAudio: HTMLAudioElement) {
-        const audioPlayers = this.$children as Card[];
-        audioPlayers.forEach(player => {
-            const audio = player.$refs.audio as HTMLAudioElement;
-            if (audio && audio !== currentAudio) {
-                audio.pause();
-                audio.currentTime = 0;
-                player.isPlaying = false;
-            }
-        });
-    }
 }
 </script>
 

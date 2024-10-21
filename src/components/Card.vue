@@ -19,9 +19,15 @@
                 <source :src="item.source" type="audio/mpeg">
             </audio>
             <div class="card__actions">
+                <div class="card__button" @click="playPrev">
+                    <font-awesome-icon :icon="['fas', 'backward']" />
+                </div>
                 <div class="card__play" :class="isPlaying ? 'active' : ''" @click="togglePlay">
                     <font-awesome-icon :icon="['fas', 'play']" />
                     <font-awesome-icon :icon="['fas', 'pause']" />
+                </div>
+                <div class="card__button" @click="playNext">
+                    <font-awesome-icon :icon="['fas', 'forward']" />
                 </div>
             </div>
             <div class="card__time">
@@ -33,6 +39,9 @@
             </div>
         </div>
         <div class="card__right">
+            <div class="card__repeat" @click="toggleRepeat" :class="{ active: isRepeatActive }">
+                <font-awesome-icon :icon="['fas', 'repeat']" />
+            </div>
             <div class="card__fav" :class="{ 'checked': isFavouriteInVuex }" @click="toggleFavourite">
                 <font-awesome-icon :icon="['fas', 'heart']" />
             </div>
@@ -44,15 +53,16 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { IMusic } from "@/mixins/index"
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faHouse, faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
-library.add(faHouse, faPlay, faPause);
+import { faHouse, faPlay, faPause, faBackward, faForward, faRepeat } from '@fortawesome/free-solid-svg-icons';
+library.add(faHouse, faPlay, faPause, faBackward, faForward, faRepeat);
 @Component
 export default class Card extends Vue {
     @Prop() item!: IMusic;
     isPlaying = false;
     currentTime = 0;
     duration = 0;
-    
+    isRepeatActive = false; 
+
     get isFavouriteInVuex() {
         return this.$store.getters.isFavorite(this.item.id);
     }
@@ -78,20 +88,74 @@ export default class Card extends Vue {
         if (this.isPlaying) {
             audio.pause();
         } else {
-        audio.play();
-            this.$emit('pause-other-audios', audio);
+            audio.play();
+            this.pauseOtherAudios(audio);
         }
         this.isPlaying = !this.isPlaying;
+    }
+    pauseOtherAudios(currentAudio: HTMLAudioElement) {
+        const audioPlayers = this.$parent?.$children;
+        audioPlayers?.forEach((player: any) => {
+        const audio = player.$refs.audio as HTMLAudioElement;
+            if (audio && audio !== currentAudio) {
+                audio.pause();
+                audio.currentTime = 0;
+                player.isPlaying = false;
+            }
+        });
+    }
+    playPrev() {
+        const audioPlayers = this.$parent?.$children;
+        const currentAudio = this.$refs.audio as HTMLAudioElement;
+        audioPlayers?.forEach((player: any) => {
+        const audio = player.$refs.audio as HTMLAudioElement;
+            if (audio && audio !== currentAudio) {
+                audio.play();
+                audio.currentTime = 0;
+                player.isPlaying = true;
+            }else{
+                audio.pause();
+                audio.currentTime = 0;
+                player.isPlaying = false;
+            }
+        });
+    }
+
+    playNext() {
+        const audioPlayers = this.$parent?.$children;
+        const currentAudio = this.$refs.audio as HTMLAudioElement;
+        audioPlayers?.forEach((player: any) => {
+        const audio = player.$refs.audio as HTMLAudioElement;
+            if (audio && audio !== currentAudio) {
+                audio.play();
+                audio.currentTime = 0;
+                player.isPlaying = true;
+            }else{
+                audio.pause();
+                audio.currentTime = 0;
+                player.isPlaying = false;
+            }
+        });
     }
 
     updateCurrentTime() {
         const audio = this.$refs.audio as HTMLAudioElement;
         this.currentTime = audio.currentTime;
     }
-
+    toggleRepeat() {
+        this.isRepeatActive = !this.isRepeatActive;
+    }
     onEnd() {
-        this.isPlaying = false;
-        this.currentTime = 0;
+        const currentAudio = this.$refs.audio as HTMLAudioElement;
+        if (this.isRepeatActive) {
+            currentAudio.play();
+            this.currentTime = 0;
+            this.isPlaying = true;
+        } else {
+            currentAudio.pause();
+            this.isPlaying = false;
+            this.currentTime = 0;
+        }
     }
 
     updateDuration() {
@@ -117,6 +181,7 @@ export default class Card extends Vue {
         audio.currentTime = newTime;
         this.currentTime = newTime;
     }
+    
 }
 </script>
 
