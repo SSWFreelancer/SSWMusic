@@ -52,9 +52,7 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { IMusic } from "@/mixins/index"
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { faHouse, faPlay, faPause, faBackward, faForward, faRepeat } from '@fortawesome/free-solid-svg-icons';
-library.add(faHouse, faPlay, faPause, faBackward, faForward, faRepeat);
+
 @Component
 export default class Card extends Vue {
     @Prop() item!: IMusic;

@@ -15,6 +15,8 @@
     position: relative
     transition: all 0.3s ease 0s
     @media (min-width: 1024px)
+        border-radius: 0 8px 8px 0
+        border-right: 1px solid $border
         height: 100vh
         align-items: stretch
         justify-content: stretch
@@ -99,8 +101,7 @@
         @media (min-width: 1024px)
             .aside.hide &
                 & span
-                    opacity: 0
-            
+                    opacity: 0   
     &__toggle
         display: none
         align-items: center
@@ -110,13 +111,14 @@
         top: 5px
         width: 24px
         border-radius: 4px
-        background: $main
+        background: #797979
+        color: $black
         height: 24px
         cursor: pointer
         transition: all 0.3s ease 0s
         @media (any-hover: hover)
             &:hover
-                background: $secondary            
+                background: $white            
         & svg
             position: absolute
             top: 50%
@@ -167,6 +169,7 @@
             align-items: center
             gap: 12px
             transition: color 0.3s ease 0s
+            color: #797979
             & span
                 transition: all 0.3s ease 0s
             & b
@@ -191,10 +194,6 @@
                         width: 0
             @media(any-hover: hover)
                 &:hover
-                    color: $main
-                    & svg
-                        fill: $main
+                    color: $white
             &.router-link-exact-active
-                color: $main
-                & svg
-                    fill: $main                   
+                color: $white

@@ -21,11 +21,13 @@ body
   min-height: 100vh
   @media (max-width: 1023.9px) 
     flex-direction: column
-  
-    
   & main
     position: relative
     flex:1 1 auto
+    background: $black2
+    @media (max-width: 1023.9px) 
+      display: flex
+      flex-direction: column      
     &>*
       padding: 30px 26px 24px
       position: absolute
@@ -38,5 +40,6 @@ body
       overflow-x: hidden
       @media(max-width: 1023px) 
         padding: 18px 15px
-        height: auto
+        flex: 1 1 auto
+        height: 100%
     
