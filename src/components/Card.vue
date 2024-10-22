@@ -1,6 +1,6 @@
 <template>
-    <div class="card">
-        <div class="card__left">
+    <div class="card" :class="{ 'active': isActive }">
+        <div class="card__left" @click="toggleActive">
             <div class="card__image">
                 <img v-if="item.image" :src="item.image" alt="">
                 <img v-else src="@/assets/images/mp3.webp" alt="">
@@ -14,7 +14,7 @@
                 </span>
             </div>
         </div>
-        <div class="card__player">
+        <div class="card__player" :class="{ 'active': isActive }">
             <audio ref="audio" @timeupdate="updateCurrentTime" @ended="onEnd" @loadedmetadata="updateDuration">
                 <source :src="item.source" type="audio/mpeg">
             </audio>
@@ -60,6 +60,7 @@ export default class Card extends Vue {
     currentTime = 0;
     duration = 0;
     isRepeatActive = false; 
+    isActive = false
 
     get isFavouriteInVuex() {
         return this.$store.getters.isFavorite(this.item.id);
@@ -80,17 +81,25 @@ export default class Card extends Vue {
     get progressBarWidth() {
         return this.duration ? `${(this.currentTime / this.duration) * 100}%` : '0%';
     }
-
+    toggleActive(){
+        const audio = this.$refs.audio as HTMLAudioElement;        
+        audio.play();
+        this.pauseOtherAudios(audio);
+        this.isActive = true;
+        this.isPlaying = true
+    }
     togglePlay() {
         const audio = this.$refs.audio as HTMLAudioElement;
         if (this.isPlaying) {
             audio.pause();
+            this.isPlaying = false
         } else {
             audio.play();
             this.pauseOtherAudios(audio);
+            this.isPlaying = true
         }
-        this.isPlaying = !this.isPlaying;
     }
+    
     pauseOtherAudios(currentAudio: HTMLAudioElement) {
         const audioPlayers = this.$parent?.$children;
         audioPlayers?.forEach((player: any) => {
@@ -99,41 +108,55 @@ export default class Card extends Vue {
                 audio.pause();
                 audio.currentTime = 0;
                 player.isPlaying = false;
-            }
-        });
-    }
-    playPrev() {
-        const audioPlayers = this.$parent?.$children;
-        const currentAudio = this.$refs.audio as HTMLAudioElement;
-        audioPlayers?.forEach((player: any) => {
-        const audio = player.$refs.audio as HTMLAudioElement;
-            if (audio && audio !== currentAudio) {
-                audio.play();
-                audio.currentTime = 0;
-                player.isPlaying = true;
-            }else{
-                audio.pause();
-                audio.currentTime = 0;
-                player.isPlaying = false;
+                player.isActive = false;
             }
         });
     }
 
-    playNext() {
-        const audioPlayers = this.$parent?.$children;
+    playPrev() {
+        const audioPlayers = this.$parent?.$children  as Array<Card>;
         const currentAudio = this.$refs.audio as HTMLAudioElement;
-        audioPlayers?.forEach((player: any) => {
-        const audio = player.$refs.audio as HTMLAudioElement;
-            if (audio && audio !== currentAudio) {
-                audio.play();
-                audio.currentTime = 0;
-                player.isPlaying = true;
-            }else{
-                audio.pause();
-                audio.currentTime = 0;
-                player.isPlaying = false;
-            }
-        });
+        if (audioPlayers) {
+            const currentIndex = audioPlayers.findIndex((player: any) => {
+                const audio = player.$refs.audio as HTMLAudioElement;
+                return audio === currentAudio;
+            });
+            if (currentIndex === -1) return;
+            const prevIndex = currentIndex === 0 ? audioPlayers.length - 1 : currentIndex - 1;
+            const prevPlayer = audioPlayers[prevIndex];
+            const prevAudio = prevPlayer.$refs.audio as HTMLAudioElement;
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+            this.isPlaying = false;
+            this.isActive = false;
+            prevAudio.play();
+            prevAudio.currentTime = 0;
+            prevPlayer.isActive = true;
+            prevPlayer.isPlaying = true;
+        }
+    }
+
+    playNext() {
+        const audioPlayers = this.$parent?.$children  as Array<Card>;
+        const currentAudio = this.$refs.audio as HTMLAudioElement;
+        if (audioPlayers) {
+            const currentIndex = audioPlayers.findIndex((player: any) => {
+                const audio = player.$refs.audio as HTMLAudioElement;
+                return audio === currentAudio;
+            });
+            if (currentIndex === -1) return;
+            const nextIndex = currentIndex === audioPlayers.length - 1 ? 0 : currentIndex + 1;
+            const nextPlayer = audioPlayers[nextIndex];
+            const nextAudio = nextPlayer.$refs.audio as HTMLAudioElement;
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+            this.isPlaying = false;
+            this.isActive = false;
+            nextAudio.play();
+            nextAudio.currentTime = 0;
+            nextPlayer.isActive = true;
+            nextPlayer.isPlaying = true;
+        }
     }
 
     updateCurrentTime() {
@@ -179,7 +202,7 @@ export default class Card extends Vue {
         audio.currentTime = newTime;
         this.currentTime = newTime;
     }
-    
+
 }
 </script>
 

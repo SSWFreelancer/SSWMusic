@@ -19,7 +19,14 @@ export default class Musics extends Vue {
             "singer": "Sevara Nazarxon",
             "image": "",
             "source": getAudioSource('vatanim.mp3'),
-        },                                    
+        },   
+        {
+            "id": "3",
+            "name": "Starman",
+            "singer": "David Bowie",
+            "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCb32AwcGZacXbm8XMKxVSKF8G2sgZLwvDxA&s",
+            "source": getAudioSource('starman.mp3'),
+        }                                
     ]
 }
 
