@@ -1,8 +1,7 @@
 @import "base/variables.sass"
 
 .card
-    display: grid
-    grid-template-columns: 1fr auto
+    display: flex
     border-radius: 4px
     background: $black2
     cursor: pointer
@@ -13,6 +12,7 @@
     @media (max-width: 767px) 
         cursor: default
     &__left
+        flex: 1 1 auto
         padding: 6px
         display: flex
         gap: 6px
@@ -112,6 +112,8 @@
         cursor: pointer
         width: 18px
         transition: all 0.3s ease 0s
+        @media (max-width: 767px) 
+            cursor: default
         &:active
             transform: scale(0.7)
         & svg
@@ -125,6 +127,7 @@
         cursor: pointer
         position: relative
         @media (max-width: 660px) 
+            cursor: default
             flex: 0 0 50px
             width: 50px
             height: 50px            
@@ -160,6 +163,8 @@
             overflow: hidden
             border-radius: 4px
             position: relative
+            @media (max-width: 767px) 
+                cursor: default
             & b
                 height: 100%
                 position: absolute
